@@ -42,9 +42,14 @@ x_3=(b_3*c_2 - b_2*c_3)/(b_2*a_3 - a_2*b_3)
 
 y_3=(c_2*a_3 - c_3*a_2)/(a_2*b_3 - a_3*b_2)
 
- 
 
- 
+#xlim, ylim을 변수로 설정하여 쉽게 바꾸게 만듦
+xl=3
+yl=3
+
+
+x=np.linspace(-xl,xl,10000)
+y=np.linspace(-yl,yl,10000) # 처음에 코드는 말 그대로 랜덤하게 뽑아서 좀 부자연스럽게 영역이 끊긴 감이 있었다. 하지만 
 
 #랜덤하게 뿌린 점을 담을 리스트와 그 중에서 영역 안에 포함된 점을 담을 리스트 설정
 
@@ -52,6 +57,7 @@ randompoint=[]
 
 conditionpoint=[]
 
+addedpoint=[]
  
 
 #세 방정식으로 만들어진 도형(삼각형)을 포함하는 최소의 직사각형 안에 랜덤하게 점을 뿌리기
@@ -64,23 +70,24 @@ c=max(y_1,y_2,y_3)
 
 d=min(y_1,y_2,y_3)
 
- 
+dots=10000
 
-for i in range(1000):
+for i in range(dots):
 
-    randompoint += [[0.01*random.randint(100*int(b),100*(int(a)+1)), 0.01*random.randint(100*int(d),100*(int(c)+1))]]
+    randompoint += [[np.random.choice(x,1),np.random.choice(y,1)]]
 
- 
+
 
 # 이 중 조건을 만족하는 점들을 다른 리스트에 담기
 
-for i in range(len(randompoint)):
 
+for i in range(dots):
+    
     if a_1*randompoint[i][0]+b_1*randompoint[i][1]+c_1>0 and a_2*randompoint[i][0]+b_2*randompoint[i][1]+c_2>0 and a_3*randompoint[i][0]+b_3*randompoint[i][1]+c_3>0:
 
         conditionpoint.append(randompoint[i])
 
- 
+
 
 #그래프 그리기
 
@@ -88,7 +95,6 @@ list_x=[]
 
 list_y=[]
 
- 
 
 for i in range(len(conditionpoint)):
 
@@ -96,8 +102,23 @@ for i in range(len(conditionpoint)):
 
     list_y = list_y + [conditionpoint[i][1]]
 
- 
+# 선형 그래프 그리기
 
-plt.scatter(list_x ,list_y)
+def line(x,a,b,c):
+    if a!=0:
+        return [x,-b/a*x-c/a]
+    return [-c/b,x]
+
+
+plt.style.use('dark_background') #눈에 확띄게 만듦
+plt.figure(figsize=(4,4),dpi=150)
+plt.xlim(-xl,xl)
+plt.ylim(-yl,yl)
+plt.scatter([x_1,x_2,x_3],[y_1,y_2,y_3],color='w',s=10)
+plt.plot([line(-xl,a_1,b_1,c_1)[1],line(xl,a_1,b_1,c_1)[1]],[line(-xl,a_1,b_1,c_1)[0],line(xl,a_1,b_1,c_1)[0]],linestyle='dashed',alpha=1,color='w')
+plt.plot([line(-xl,a_2,b_2,c_2)[1],line(xl,a_2,b_2,c_2)[1]],[line(-xl,a_2,b_2,c_2)[0],line(xl,a_2,b_2,c_2)[0]],linestyle='dashed',alpha=1,color='w')
+plt.plot([line(-xl,a_3,b_3,c_3)[1],line(xl,a_3,b_3,c_3)[1]],[line(-xl,a_3,b_3,c_3)[0],line(xl,a_3,b_3,c_3)[0]],linestyle='dashed',alpha=1,color='w')
+#print([y_1,y_2,y_3],[x_1,x_2,x_3])
+plt.scatter(list_x ,list_y,s=0.7,color='lightgray')
 
 plt.show()
